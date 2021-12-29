@@ -1,0 +1,36 @@
+version: '3.4'
+services:
+  odoo:
+    image: llacox/odoo:14.0-flexpertech
+    volumes:
+      - data:/var/lib/odoo
+    command: --workers 2 --limit-time-cpu 1800 --limit-time-real 1800
+    ports:
+      - 49259:8069
+      - 49260:8072
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+  db:
+    image: postgres:10
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+    restart: unless-stopped
+volumes:
+  data:
+    name: flexpertech_data
+    external: true
+  db-data:
+    name: flexpertech_db_data
+    external: true
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet:  10.103.57.1/28
