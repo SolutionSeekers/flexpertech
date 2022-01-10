@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="report_invoice_flexpertech" inherit_id="account.report_invoice_document">
+        <xpath expr="//th[@name='th_description']" position="after">
+            <t t-set="po_in_lines" t-value="False"/>
+            <t t-set="lnes" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+            <t t-foreach="lnes" t-as="lne">
+                <t t-if="lne.client_po"><t t-set="po_in_lines" t-value="True"/></t>
+            </t>
+            <t t-if="po_in_lines == True"><th name="th_po_number" class="text-left"><span>Client PO</span></th></t>
+        </xpath>
+        <xpath expr="//td[@name='account_invoice_line_name']" position="after">
+            <t t-if="line.client_po">
+                <td name="account_invoice_line_po"><span t-field="line.client_po"/></td>
+            </t>
+        </xpath>
+    </template>
+</odoo>
